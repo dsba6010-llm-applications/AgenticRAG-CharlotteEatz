@@ -110,3 +110,4 @@ urllib3==2.2.3
 watchfiles==0.24.0
 yarl==1.16.0
 diff-match-patch
+st-chat-message
