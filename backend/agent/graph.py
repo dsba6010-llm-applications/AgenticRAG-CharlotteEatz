@@ -7,11 +7,11 @@ from langchain_core.messages import ToolMessage, HumanMessage
 import json
 import os
 from langchain_openai import ChatOpenAI
-from backend.src.agent.state import State
-from backend.src.agent.nodes.assistant import Assistant
-from backend.src.agent.utils import create_tool_node_with_fallback
-from backend.src.agent.tools.general import book_a_cab, book_a_table, answer_question
-from backend.src.agent.rag import populate_vector_db, create_faiss_store
+from backend.agent.state import State
+from backend.agent.nodes.assistant import Assistant
+from backend.agent.utils import create_tool_node_with_fallback
+from backend.agent.tools.general import book_a_cab, book_a_table, answer_question
+from backend.agent.rag import populate_vector_db, create_faiss_store
 
 
 token = os.environ.get("OPENAI_API_KEY")
@@ -61,7 +61,7 @@ general_agent = general_prompt | llm.bind_tools(
 
 builder = StateGraph(State)
 routes: list = json.load(
-    open(os.path.dirname(os.path.abspath(__file__)) + "/../../../role-values.json")
+    open(os.path.dirname(os.path.abspath(__file__)) + "/../../role-values.json")
 )
 
 

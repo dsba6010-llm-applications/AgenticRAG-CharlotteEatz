@@ -10,7 +10,7 @@ from langchain.schema.runnable import RunnableMap
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough
 from langchain_core.prompts import ChatPromptTemplate
-from backend.src.agent.rag import load_faiss_store
+from backend.agent.rag import load_faiss_store
 
 # from openai import OpenAI
 from langchain_openai import OpenAI, OpenAIEmbeddings
