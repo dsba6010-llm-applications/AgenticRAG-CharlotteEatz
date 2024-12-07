@@ -1,5 +1,5 @@
-from backend.src.agent.graph import graph
-from backend.src.agent.utils import _print_event
+from backend.agent.graph import graph
+from backend.agent.utils import _print_event
 import uuid
 from langchain_core.messages import ToolMessage
 
@@ -17,10 +17,15 @@ _printed = set()
 while True:
     persona = "General Agent"
     user_query = input("Enter query (type 'quit' to quit): ")
-    if user_query=="quit":
+    if user_query == "quit":
         break
     events = graph.stream(
-        {"messages": {"General Agent": ("user", user_query)}, "current_persona":persona}, config, stream_mode="values"
+        {
+            "messages": {"General Agent": ("user", user_query)},
+            "current_persona": persona,
+        },
+        config,
+        stream_mode="values",
     )
     for event in events:
         _print_event(event, _printed)
@@ -35,11 +40,7 @@ while True:
         except:
             user_input = "y"
         if user_input.strip() == "y":
-            result = graph.invoke(
-                None,
-                config,
-                stream_mode="values"
-            )
+            result = graph.invoke(None, config, stream_mode="values")
         else:
             result = graph.invoke(
                 {

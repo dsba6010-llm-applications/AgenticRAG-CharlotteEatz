@@ -1,8 +1,9 @@
 from langchain_core.runnables import Runnable, RunnableConfig
-from backend.src.agent.state import State
+from backend.agent.state import State
+
 
 class Assistant:
-    def __init__(self, runnable: Runnable, persona: str=None):
+    def __init__(self, runnable: Runnable, persona: str = None):
         self.runnable = runnable
         self.persona = persona
 
@@ -20,11 +21,13 @@ class Assistant:
                 and not result.content[0].get("text")
             ):
                 retried += 1
-                if retried>=3:
+                if retried >= 3:
                     print("Retried 3 times for empty response")
                     break
-                
-                state["messages"][current_persona] = state["messages"][current_persona] + [("user", "Respond with a real output.")]
+
+                state["messages"][current_persona] = state["messages"][
+                    current_persona
+                ] + [("user", "Respond with a real output.")]
             else:
                 break
         return {"messages": {current_persona: result}}

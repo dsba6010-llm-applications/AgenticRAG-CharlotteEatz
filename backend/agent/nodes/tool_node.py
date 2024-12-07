@@ -43,7 +43,12 @@ INVALID_TOOL_NAME_ERROR_TEMPLATE = (
     "Error: {requested_tool} is not a valid tool, try one of [{available_tools}]."
 )
 TOOL_CALL_ERROR_TEMPLATE = "Error: {error}\n Please fix your mistakes."
-from langgraph.prebuilt.tool_node import msg_content_output, _get_state_args, _get_store_arg
+from langgraph.prebuilt.tool_node import (
+    msg_content_output,
+    _get_state_args,
+    _get_store_arg,
+)
+
 
 class ToolNode(RunnableCallable):
 
@@ -88,7 +93,11 @@ class ToolNode(RunnableCallable):
             outputs = [*executor.map(self._run_one, tool_calls, config_list)]
         # TypedDict, pydantic, dataclass, etc. should all be able to load from dict
         if self.messages_key:
-            return outputs if output_type == "list" else {"messages": {self.messages_key: outputs}}
+            return (
+                outputs
+                if output_type == "list"
+                else {"messages": {self.messages_key: outputs}}
+            )
         return outputs if output_type == "list" else {"messages": outputs}
 
     def invoke(
@@ -122,7 +131,11 @@ class ToolNode(RunnableCallable):
         )
         # TypedDict, pydantic, dataclass, etc. should all be able to load from dict
         if self.messages_key:
-            return outputs if output_type == "list" else {"messages": {self.messages_key: outputs}}
+            return (
+                outputs
+                if output_type == "list"
+                else {"messages": {self.messages_key: outputs}}
+            )
         return outputs if output_type == "list" else {"messages": outputs}
 
     def _run_one(self, call: ToolCall, config: RunnableConfig) -> ToolMessage:
@@ -176,7 +189,7 @@ class ToolNode(RunnableCallable):
             message: AnyMessage = input[-1]
         elif isinstance(input, dict) and (messages := input.get("messages", [])):
             output_type = "dict"
-            if isinstance(messages,dict):
+            if isinstance(messages, dict):
                 if self.messages_key in messages:
                     message = messages[self.messages_key][-1]
                 else:
@@ -186,7 +199,7 @@ class ToolNode(RunnableCallable):
         elif messages := getattr(input, "messages", None):
             # Assume dataclass-like state that can coerce from dict
             output_type = "dict"
-            if isinstance(messages,dict):
+            if isinstance(messages, dict):
                 if self.messages_key in messages:
                     message = messages[self.messages_key][-1]
                 else:
@@ -231,7 +244,7 @@ class ToolNode(RunnableCallable):
                 and required_fields[0] == "messages"
                 or required_fields[0] is None
             ):
-                input = {"messages":  input}
+                input = {"messages": input}
             else:
                 err_msg = (
                     f"Invalid input to ToolNode. Tool {tool_call['name']} requires "
