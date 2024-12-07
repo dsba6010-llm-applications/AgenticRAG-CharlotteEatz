@@ -1,7 +1,7 @@
 import re
 import streamlit as st
-from backend.src.agent.graph import graph
-from backend.src.agent.utils import _print_event
+from backend.agent.graph import graph
+from backend.agent.utils import _print_event
 from langchain_core.messages import ToolMessage, HumanMessage, AIMessage
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain_core.output_parsers import StrOutputParser

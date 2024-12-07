@@ -1,23 +1,14 @@
-import pytest
-import os
-
-from unittest.mock import patch, MagicMock
-from backend.src.agent.tools.general import book_a_cab, book_a_table, answer_question
+from backend.agent.tools.general import book_a_cab, book_a_table, answer_question
 
 # # Test book_a_cab
 # def test_book_a_cab():
 #     result = book_a_cab("I need a taxi to go to the restaurant")
 #     assert result == "your taxi has been booked", "Cab booking response is incorrect"
 #     print("Test Passed: The cab booking response is correct")
-from _pytest.debugging import pytestPDB as __pytestPDB
-import trafaret as t
 
 
 def test_book_a_cab():
-    boolean_field = t.ToBool
     result = book_a_cab("I need a taxi to go to the restaurant")
-    if result != "your taxi has been booked":
-        __pytestPDB().set_trace()  # Start the debugger here
     assert result == "your taxi has been booked", "Cab booking response is incorrect"
 
 
@@ -52,9 +43,9 @@ test_book_a_cab()
 #     assert result == expected_response, f"Unexpected response for query: {input_query}"
 
 # # Additional Tests for answer_question with edge cases
-# @patch("backend.src.agent.tools.general.OpenAI")  # Mock OpenAI
-# @patch("backend.src.agent.tools.general.OpenAIEmbeddings")  # Mock OpenAIEmbeddings
-# @patch("backend.src.agent.tools.general.FAISS.load_local")  # Mock FAISS.load_local
+# @patch("backend.agent.tools.general.OpenAI")  # Mock OpenAI
+# @patch("backend.agent.tools.general.OpenAIEmbeddings")  # Mock OpenAIEmbeddings
+# @patch("backend.agent.tools.general.FAISS.load_local")  # Mock FAISS.load_local
 # @pytest.mark.parametrize("input_query, mock_docs, expected_response", [
 #     # Normal case
 #     ("What is the capital of France?", [("Paris is the capital.", 0.9)], "This is the response from RAG"),
@@ -103,8 +94,8 @@ test_book_a_cab()
 #     mock_llm.invoke.assert_called_once()
 
 # # Test FAISS store load failure for empty query
-# @patch("backend.src.agent.tools.general.OpenAIEmbeddings")  # Mock OpenAIEmbeddings
-# @patch("backend.src.agent.rag.FAISS.load_local")  # Mock FAISS.load_local
+# @patch("backend.agent.tools.general.OpenAIEmbeddings")  # Mock OpenAIEmbeddings
+# @patch("backend.agent.rag.FAISS.load_local")  # Mock FAISS.load_local
 # def test_answer_question_empty_query_faiss_load_error(mock_faiss_load_local, mock_openai_embeddings):
 #     # Mock environment variable
 #     os.environ["OPENAI_API_KEY"] = "fake-api-key"
@@ -117,9 +108,9 @@ test_book_a_cab()
 #         answer_question("")
 
 # # Test FAISS store load with no documents
-# @patch("backend.src.agent.tools.general.OpenAI")  # Mock OpenAI
-# @patch("backend.src.agent.tools.general.OpenAIEmbeddings")  # Mock OpenAIEmbeddings
-# @patch("backend.src.agent.tools.general.FAISS.load_local")  # Mock FAISS.load_local
+# @patch("backend.agent.tools.general.OpenAI")  # Mock OpenAI
+# @patch("backend.agent.tools.general.OpenAIEmbeddings")  # Mock OpenAIEmbeddings
+# @patch("backend.agent.tools.general.FAISS.load_local")  # Mock FAISS.load_local
 # def test_answer_question_no_documents(mock_faiss_load_local, mock_openai_embeddings, mock_openai):
 #     # Mock environment variable
 #     os.environ["OPENAI_API_KEY"] = "fake-api-key"
