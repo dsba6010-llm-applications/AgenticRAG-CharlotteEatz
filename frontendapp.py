@@ -205,7 +205,7 @@ if prompt := st.chat_input():
     elif st.session_state.get("waiting_for_denial_reason", False):
         #deny_reason = prompt
         deny_reason = "user requested to cancel"
-        
+        st.write("Denial reason submitted.")
         result = graph.invoke(
             {
                 "messages": {
@@ -225,7 +225,6 @@ if prompt := st.chat_input():
                 for msg in persona_messages:
                     if isinstance(msg, AIMessage) and msg.content.strip():
                         st.session_state.messages.append(ChatMessage(role="assistant", content=msg.content))
-        st.write("Denial reason submitted.")
         
         # Display the latest assistant message
         if st.session_state.messages[-1].role == "assistant":
