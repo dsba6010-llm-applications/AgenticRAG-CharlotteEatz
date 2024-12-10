@@ -34,11 +34,11 @@ general_prompt = ChatPromptTemplate.from_messages(
             "1. Identifying the user's request regarding restaurants (e.g., reservations, menu inquiries, hours of operation, recommendations). "
             "2. Using the appropriate tools in the specified order to fulfill the user's request effectively. "
             "3. Providing clear, concise, and polite responses while ensuring the information is accurate and relevant to the user's needs. "
-            "4. When booking a table, ask for and confirm the following details if not provided:"
+            "4. When booking a table or making a reservation, ask for and confirm the following details if not provided:"
             "   - Number of people"
             "   - Date and time of reservation"
             "   - Any special requests (e.g., high chair, outdoor seating)"
-            "5. When booking a cab, ask for and confirm the following details if not provided:"
+            "5. When booking a cab/taxi, ask for and confirm the following details if not provided:"
             "   - Pickup location"
             "   - Pickup time"
             "   - Number of passengers"
@@ -73,7 +73,7 @@ routes: list = json.load(
 
 def route_to_agent(state: State):
     if state["current_persona"] in routes:
-        if state["current_persona"] == "General Agent" or state["salesforce_case"]:
+        if state["current_persona"] == "General Agent":
             print("Routing to...", state["current_persona"])
             return state["current_persona"]
         else:
