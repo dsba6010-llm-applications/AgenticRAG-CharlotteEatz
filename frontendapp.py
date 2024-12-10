@@ -2,7 +2,7 @@ import re
 import streamlit as st
 from backend.agent.graph import graph
 from backend.agent.utils import _print_event
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import ToolMessage, HumanMessage, AIMessage
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain_core.output_parsers import StrOutputParser
 from langchain.schema import ChatMessage
@@ -119,7 +119,7 @@ if prompt := st.chat_input():
         )                   
         # Append to session state and show in chat
         st.session_state.messages.append(ChatMessage(role="assistant", content=alert_message))
-        st.chat_message("assistant").markdown(alert_message)
+        st.chat_message("assistant").markdown(alert_message)                                                                                   
 
     elif st.session_state.get("waiting_for_approval", False):
         approval_response = prompt.lower()
@@ -167,49 +167,73 @@ if prompt := st.chat_input():
         elif approval_response in ['no', 'n', 'deny', 'reject']:
             st.session_state["interrupt_action"] = "denied"
             st.session_state["interrupt_processed"] = True
-            st.write("Action denied. Continuing the conversation.")
-
-            # Remove the last assistant message (approval request) from the session state
-            if st.session_state.messages and st.session_state.messages[-1].role == "assistant":
-                st.session_state.messages.pop()
-
-            # Instead of sending a message, we'll just invoke the graph with None
-            # This should trigger the graph to handle the denial internally
-            result = graph.invoke(None, config)
-
-            # # Process the result and continue the conversation
-            # conversation_history = get_conversation_history()
-            # response = graph.stream(
-            #     {"messages": {"General Agent": ("user", conversation_history)}, "current_persona": "General Agent"},
-            #     config,
-            #     stream_mode="values",
-            # )
-
-            new_messages = []
-            for event in response:
-                _print_event(event, _printed)
-                if isinstance(event, dict):
-                    messages = event.get("messages", {})
-                    current_persona = event.get("current_persona", "General Agent")
-                    persona_messages = messages.get(current_persona, [])
-
+            st.session_state["waiting_for_denial_reason"] = False
+            deny_reason = "user requested to cancel"
+            st.write("Denial reason submitted.")
+            result = graph.invoke(
+                {
+                    "messages": {
+                        "General Agent": ToolMessage(
+                            tool_call_id=str(uuid.uuid4()),
+                            content=f"API call denied by user. Reason: '{deny_reason}'. Continue assisting, accounting for the user's input.",
+                            
+                        )
+                    }
+                },
+                config,
+            )
+            for res_event in result:
+                if isinstance(res_event, dict):
+                    messages = res_event.get("messages", {})
+                    persona_messages = messages.get("General Agent", [])
                     for msg in persona_messages:
                         if isinstance(msg, AIMessage) and msg.content.strip():
-                            new_messages.append(msg.content)
+                            st.session_state.messages.append(ChatMessage(role="assistant", content=msg.content))
+            
+            # Display the latest assistant message
+            if st.session_state.messages[-1].role == "assistant":
+                st.chat_message("assistant").write(st.session_state.messages[-1].content)
 
-            # Combine all new messages into a single response
-            if new_messages:
-                combined_response = " ".join(new_messages)
-                
-                # Check if the new message is a duplicate of the last assistant message
-                if not (st.session_state.messages and 
-                        st.session_state.messages[-1].role == "assistant" and 
-                        st.session_state.messages[-1].content.strip() == combined_response.strip()):
-                    st.session_state.messages.append(ChatMessage(role="assistant", content=combined_response))
-                    st.chat_message("assistant").write(combined_response)
+            st.session_state["waiting_for_denial_reason"] = False
+            # st.session_state.messages.append(ChatMessage(role="assistant", content="Denial processed. Please provide a reason for the denial:"))
+            # st.chat_message("assistant").write("Denial processed. Please provide a reason for the denial:")
 
-            # Reset interrupt flags
-            st.session_state["waiting_for_approval"] = False
-            st.session_state["interrupt_processed"] = False
-            st.session_state["interrupt_action"] = None
-            st.session_state["interrupt_details"] = None
+        else:
+            st.write("Invalid response. Please answer with 'yes' or 'no'.")
+            st.session_state["waiting_for_approval"] = True  # Keep waiting for a valid response
+
+    elif st.session_state.get("waiting_for_denial_reason", False):
+        #deny_reason = prompt
+        deny_reason = "user requested to cancel"
+        st.write("Denial reason submitted.")
+        result = graph.invoke(
+            {
+                "messages": {
+                    "General Agent": ToolMessage(
+                        tool_call_id=str(uuid.uuid4()),
+                        content=f"API call denied by user. Reason: '{deny_reason}'. Continue assisting, accounting for the user's input.",
+                        
+                    )
+                }
+            },
+            config,
+        )
+        for res_event in result:
+            if isinstance(res_event, dict):
+                messages = res_event.get("messages", {})
+                persona_messages = messages.get("General Agent", [])
+                for msg in persona_messages:
+                    if isinstance(msg, AIMessage) and msg.content.strip():
+                        st.session_state.messages.append(ChatMessage(role="assistant", content=msg.content))
+        
+        # Display the latest assistant message
+        if st.session_state.messages[-1].role == "assistant":
+            st.chat_message("assistant").write(st.session_state.messages[-1].content)
+
+        st.session_state["waiting_for_denial_reason"] = False
+
+    # Reset interrupt flags for the next interaction
+    if st.session_state.get("interrupt_processed", False):
+        st.session_state["waiting_for_approval"] = False
+        st.session_state["interrupt_processed"] = False
+        st.session_state["interrupt_action"] = None

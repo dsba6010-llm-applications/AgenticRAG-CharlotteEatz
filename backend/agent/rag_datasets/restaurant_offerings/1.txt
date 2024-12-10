@@ -1,7 +1,7 @@
 | food_id | name | price | description | ingredients | restaurant_name | style_name | zip_code |
 |---------|------|--------|-------------|-------------|-----------------|------------|----------|
 | 1 | Southern Fried Chicken Platter | 16.99 | Crispy buttermilk-brined chicken served with honey butter biscuits and collard greens | chicken;buttermilk;flour;spices;honey;butter;collard greens | Magnolia's Home Kitchen | Southern | 28205 |
-| 2 | Shrimp & Grits | 18.99 | Creamy stone-ground grits topped with sautÃ©ed shrimp, andouille sausage, and creole sauce | shrimp;grits;andouille sausage;butter;cream;creole seasonings;bell peppers;onions | Magnolia's Home Kitchen | Southern | 28205 |
+| 2 | Shrimp & Grits | 18.99 | Creamy stone-ground grits topped with sautéed shrimp, andouille sausage, and creole sauce | shrimp;grits;andouille sausage;butter;cream;creole seasonings;bell peppers;onions | Magnolia's Home Kitchen | Southern | 28205 |
 | 3 | Nashville Hot Chicken Sandwich | 14.99 | Spicy fried chicken breast with house-made pickles and slaw on a brioche bun | chicken breast;cayenne;paprika;pickles;cabbage;mayonnaise;brioche | Hot Bird | Southern | 28202 |
 | 4 | Bulgogi Bowl | 15.99 | Marinated Korean beef served over steamed rice with kimchi and vegetables | beef;soy sauce;sesame oil;garlic;ginger;rice;kimchi;carrots;spinach | Seoul Kitchen | Korean | 28203 |
 | 5 | Kimchi Fried Rice | 13.99 | House-made kimchi fried with rice, vegetables, and topped with a fried egg | rice;kimchi;vegetables;egg;sesame oil;green onions | Seoul Kitchen | Korean | 28203 |
