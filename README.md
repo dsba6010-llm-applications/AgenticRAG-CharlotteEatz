@@ -2,7 +2,7 @@
   <h1>🍴 Charlotte Eatz 🤖</h1>
 </div>
 
-<div align="center"><b>Eric Phann</b>, product mgr. | <b>Yaxin Zhao</b>, data/prompt engr. | <b>Lakshmi Jayanth Kumar</b>, app dev. | <b>Gaurav Samdani</b>, LLM ops.</div>  
+<div align="center"><b>Eric Phann</b>, product manager | <b>Yaxin Zhao</b>, data/prompt engineer | <b>Lakshmi Jayanth Kumar</b>, application developer | <b>Gaurav Samdani</b>, LLM operations</div>  
 <br>
 
 <div align="center">
