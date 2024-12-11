@@ -8,7 +8,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain.schema import ChatMessage
 import uuid
 from dotenv import load_dotenv
-import langgraph
+import os
 from langgraph.pregel.io import AddableValuesDict
 
 # Initialize unique thread ID for the session
@@ -41,15 +41,34 @@ def get_conversation_history():
             history.append(f"{role}: {msg.content}")
     return "\n".join(history)
 
+# Load environment variables
+load_dotenv()
+
 # Streamlit UI
 st.set_page_config(page_title="DineBot - Your Chef on the Go", page_icon="🍽️")
 
-st.title("🍽️ Welcome to Dinebot")
+# Side panel for API Key input
+with st.sidebar:
+    with st.expander("Configuration", expanded=False):
+        api_key = st.text_input(
+                "Unlock your digital chef’s kitchen! Enter your OpenAI API Key🔑 to get cooking with Dinebot:",
+                type="password"
+            )
+if api_key:
+    os.environ["OPENAI_API_KEY"] = api_key
+else:
+    st.sidebar.warning("Please provide your OpenAI API Key to continue.")
+    st.sidebar.info("Go to the 'Configuration' section in the sidebar to enter your API Key.")
+    st.markdown("<h3 style='color:red;'>Enter your OpenAI API Key🔑 to unlock your restaurant assistant!</h3>", unsafe_allow_html=True)
+    st.stop()
+    
+    
+st.title("🍽️ Welcome to Charlotte Eatz")
 st.markdown(
-    "<h2>Your Personal Restaurant Assistant 🤖</h2>",
+    "<h2>  Hi! Nice to meet you, I am Dinebot 🤖</h2>",
     unsafe_allow_html=True,
 )
-st.markdown("Dinebot can assist you with cab booking, table reservations, and provide restaurant information. Ask me anything!")
+st.markdown("🤖 I can assist you with cab booking, table reservations, and provide restaurant information. Ask me anything!")
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [ChatMessage(role="assistant", content="How can I help you?")]
@@ -109,10 +128,17 @@ if prompt := st.chat_input():
     if snapshot.next and not st.session_state.get("waiting_for_approval", False):
         st.session_state["waiting_for_approval"] = True
         st.session_state["interrupt_details"] = snapshot.next
-        st.session_state.messages.append(ChatMessage(role="assistant", content="⚠️ The agent is requesting approval for an action. Do you approve?"))
-        st.chat_message("assistant").write("⚠️ The agent is requesting approval for an action. Do you approve?")
-        st.write("Action Details:")
-        st.write(snapshot.next)
+        # Add the approval request to session state messages and display it
+        alert_message = (
+            "⚠️ The agent is requesting approval for an action.\n\n"
+            "### 🛠️ Action Required\n\n"
+            "The assistant has identified an action that requires your confirmation. "
+            "Please type **'Y'**, **'Yes'**, **'Approve'**, **'Ok'**, or **'Sure'** to approve, "
+            "or **'N'**, **'No'**, **'Deny'**, or **'Reject'** to deny."
+        )                   
+        # Append to session state and show in chat
+        st.session_state.messages.append(ChatMessage(role="assistant", content=alert_message))
+        st.chat_message("assistant").markdown(alert_message)
 
     elif st.session_state.get("waiting_for_approval", False):
         approval_response = prompt.lower()
@@ -121,10 +147,10 @@ if prompt := st.chat_input():
             st.session_state["interrupt_action"] = "approved"
             st.session_state["interrupt_processed"] = True
             st.write("Approval processed, continuing with the agent.")
-            
+
             # Execute the approved action
             result = graph.invoke(None, config)
-            
+
             # Process the result and continue the conversation
             conversation_history = get_conversation_history()
             response = graph.stream(
@@ -132,7 +158,7 @@ if prompt := st.chat_input():
                 config,
                 stream_mode="values",
             )
-            
+
             new_messages = []
             for event in response:
                 _print_event(event, _printed)
@@ -140,17 +166,17 @@ if prompt := st.chat_input():
                     messages = event.get("messages", {})
                     current_persona = event.get("current_persona", "General Agent")
                     persona_messages = messages.get(current_persona, [])
-                    
+
                     for msg in persona_messages:
                         if isinstance(msg, AIMessage) and msg.content.strip():
                             new_messages.append(msg.content)
-            
+
             # Combine all new messages into a single response
             if new_messages:
                 combined_response = " ".join(new_messages)
                 st.session_state.messages.append(ChatMessage(role="assistant", content=combined_response))
                 st.chat_message("assistant").write(combined_response)
-            
+
             # Reset interrupt flags
             st.session_state["waiting_for_approval"] = False
             st.session_state["interrupt_processed"] = False
@@ -161,19 +187,15 @@ if prompt := st.chat_input():
             st.session_state["interrupt_action"] = "denied"
             st.session_state["interrupt_processed"] = True
             st.write("Action denied. Continuing the conversation.")
-            
+
+            # Remove the last assistant message (approval request) from the session state
+            if st.session_state.messages and st.session_state.messages[-1].role == "assistant":
+                st.session_state.messages.pop()
+
             # Instead of sending a message, we'll just invoke the graph with None
             # This should trigger the graph to handle the denial internally
             result = graph.invoke(None, config)
-            
-            # Process the result and continue the conversation
-            conversation_history = get_conversation_history()
-            response = graph.stream(
-                {"messages": {"General Agent": ("user", conversation_history)}, "current_persona": "General Agent"},
-                config,
-                stream_mode="values",
-            )
-            
+
             new_messages = []
             for event in response:
                 _print_event(event, _printed)
@@ -181,29 +203,24 @@ if prompt := st.chat_input():
                     messages = event.get("messages", {})
                     current_persona = event.get("current_persona", "General Agent")
                     persona_messages = messages.get(current_persona, [])
-                    
+
                     for msg in persona_messages:
                         if isinstance(msg, AIMessage) and msg.content.strip():
                             new_messages.append(msg.content)
-            
+
             # Combine all new messages into a single response
             if new_messages:
                 combined_response = " ".join(new_messages)
-                st.session_state.messages.append(ChatMessage(role="assistant", content=combined_response))
-                st.chat_message("assistant").write(combined_response)
-            
+
+                # Check if the new message is a duplicate of the last assistant message
+                if not (st.session_state.messages and 
+                        st.session_state.messages[-1].role == "assistant" and 
+                        st.session_state.messages[-1].content.strip() == combined_response.strip()):
+                    st.session_state.messages.append(ChatMessage(role="assistant", content=combined_response))
+                    st.chat_message("assistant").write(combined_response)
+
             # Reset interrupt flags
             st.session_state["waiting_for_approval"] = False
             st.session_state["interrupt_processed"] = False
             st.session_state["interrupt_action"] = None
             st.session_state["interrupt_details"] = None
-
-        else:
-            st.write("Invalid response. Please answer with 'yes' or 'no'.")
-            st.session_state["waiting_for_approval"] = True  # Keep waiting for a valid response
-
-    # Reset interrupt flags for the next interaction
-    if st.session_state.get("interrupt_processed", False):
-        st.session_state["waiting_for_approval"] = False
-        st.session_state["interrupt_processed"] = False
-        st.session_state["interrupt_action"] = None
