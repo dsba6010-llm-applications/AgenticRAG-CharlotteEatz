@@ -66,7 +66,9 @@ You are now able to run our app locally using `streamlit run dinebot_app.py`!
 For more details (or if you are just curious), please take a look at our [Final Report!](https://github.com/dsba6010-llm-applications/AgenticRAG-CharlotteEatz/blob/main/docs/Final%20Project%20Report.pdf)
  
 ---
-💕 Thanks for using Charlotte Eatz! Let’s make every meal an adventure with DineBot. 🍷🍕
+<div align="center">
+  💕 Thanks for using Charlotte Eatz! Let’s make every meal an adventure with DineBot. 🍷🍕
+</div>
 
 
 
