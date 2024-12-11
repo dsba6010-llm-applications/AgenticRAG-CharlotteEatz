@@ -25,6 +25,7 @@ Welcome to <b>Charlotte Eatz</b>, your go-to app for exploring Charlotte's tasti
 ## ✨ Ready to Get Started?
 ### 1. Streamlit Cloud ☁️
 The _quickest_ and _easiest_ way to our app is through [Streamlit Cloud!](https://dinebot-uncc-dsba.streamlit.app/)  
+
 Simply input your __OpenAI API Key__ and you are ready to chat with DineBot 🤖!
 
 ### 2. Local Deployment ⚙️
@@ -52,6 +53,9 @@ python -m pip install -r requirements.txt
 > If you're using Windows CMD, the 2nd line will be `.\venv\Scripts\activate.bat`. 
 > Alternatively, if you're using Windows PowerShell, it would be `.\venv\Scripts\activate.ps1`
 
+Lastly, create a .env file with `OPENAI_API_KEY='Your OpenAI API Key'`.  
+
+You are now able to run our app locally using `streamlit run dinebot_app.py`!
 ## 🛠️ Behind the Scenes 
 - **Core Architecture**: Powered by an **agentic RAG** (Retrieval-Augmented Generation) system made by and for Charlotte foodies.
   - Built using **FAISS** for fast and efficient information retrieval.
