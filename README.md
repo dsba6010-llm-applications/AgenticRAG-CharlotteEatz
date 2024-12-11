@@ -3,6 +3,8 @@ __Group 3__: Eric (product mgr.), Yaxin (data/prompt engr.), Lakshmi (app dev.),
 
 Charlotte Eatz is a large language model (LLM) foodie companion app powered by retrieval-augmented generation (RAG) and agentic automation. The app enables users to discover and book reservations at local restaurants in Charlotte. Focused on Charlotte neighborhoods and specific zip codes, the system ensures users receive up-to-date, relevant options and can seamlessly reserve a table. 
 
+![Generated image of DineBot from DALL-E](https://raw.githubusercontent.com/dsba6010-llm-applications/AgenticRAG-CharlotteEatz/refs/heads/main/DineBot.png)
+
 ## ⚙️ Setup  
 1. Make sure you have signed up for a [Modal account](https://modal.com/).
   
