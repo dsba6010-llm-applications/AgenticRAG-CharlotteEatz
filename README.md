@@ -12,7 +12,7 @@
 <br>
 
 <div align="center">
-Welcome to <b>Charlotte Eatz</b>, your go-to app for exploring Charlotte's tastiest spots! We aim to simplify dining experiences in Charlotte, NC by seamlessly integrating restaurant reservations with additional end-to-end services like transportation booking and retrieving restaurant reviews. The core value and heart of Charlotte Eatz lies in its ability to streamline multiple tasks through <b>DineBot</b>, the app’s chatbot, saving time and improving users’ foodie experience in Charlotte.
+Welcome to <b>Charlotte Eatz</b>, your go-to app for exploring Charlotte's tastiest spots! We aim to simplify dining experiences in Charlotte, NC by seamlessly integrating restaurant reservations with additional end-to-end services like transportation booking and retrieving restaurant reviews. The core value and heart of Charlotte Eatz lies in its ability to streamline multiple tasks through <b>DineBot</b>, the app’s chatbot, saving time and improving users’ foodie experience.
 </div>
 <br>
 
