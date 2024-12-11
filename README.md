@@ -43,7 +43,7 @@ Then `cd` into the folder `AgenticRAG-CharlotteEatz`.
 Create a virtual environment, activate it, and install the dependencies.
 
 ```python
-python3.10 -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
