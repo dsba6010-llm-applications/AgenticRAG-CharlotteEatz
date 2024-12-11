@@ -8,7 +8,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain.schema import ChatMessage
 import uuid
 from dotenv import load_dotenv
-import langgraph
+import os
 from langgraph.pregel.io import AddableValuesDict
 
 # Initialize unique thread ID for the session
@@ -41,15 +41,34 @@ def get_conversation_history():
             history.append(f"{role}: {msg.content}")
     return "\n".join(history)
 
+# Load environment variables
+load_dotenv()
+
 # Streamlit UI
 st.set_page_config(page_title="DineBot - Your Chef on the Go", page_icon="🍽️")
 
-st.title("🍽️ Welcome to Dinebot")
+# Side panel for API Key input
+with st.sidebar:
+    with st.expander("Configuration", expanded=False):
+        api_key = st.text_input(
+                "Unlock your digital chef’s kitchen! Enter your OpenAI API Key🔑 to get cooking with Dinebot:",
+                type="password"
+            )
+if api_key:
+    os.environ["OPENAI_API_KEY"] = api_key
+else:
+    st.sidebar.warning("Please provide your OpenAI API Key to continue.")
+    st.sidebar.info("Go to the 'Configuration' section in the sidebar to enter your API Key.")
+    st.markdown("<h3 style='color:red;'>Enter your OpenAI API Key🔑 to unlock your restaurant assistant!</h3>", unsafe_allow_html=True)
+    st.stop()
+    
+    
+st.title("🍽️ Welcome to Charlotte Eatz")
 st.markdown(
-    "<h2>Your Personal Restaurant Assistant 🤖</h2>",
+    "<h2>  Hi! Nice to meet you, I am Dinebot 🤖</h2>",
     unsafe_allow_html=True,
 )
-st.markdown("Dinebot can assist you with cab booking, table reservations, and provide restaurant information. Ask me anything!")
+st.markdown("🤖 I can assist you with cab booking, table reservations, and provide restaurant information. Ask me anything!")
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [ChatMessage(role="assistant", content="How can I help you?")]
@@ -128,10 +147,10 @@ if prompt := st.chat_input():
             st.session_state["interrupt_action"] = "approved"
             st.session_state["interrupt_processed"] = True
             st.write("Approval processed, continuing with the agent.")
-            
+
             # Execute the approved action
             result = graph.invoke(None, config)
-            
+
             # Process the result and continue the conversation
             conversation_history = get_conversation_history()
             response = graph.stream(
@@ -139,7 +158,7 @@ if prompt := st.chat_input():
                 config,
                 stream_mode="values",
             )
-            
+
             new_messages = []
             for event in response:
                 _print_event(event, _printed)
@@ -147,17 +166,17 @@ if prompt := st.chat_input():
                     messages = event.get("messages", {})
                     current_persona = event.get("current_persona", "General Agent")
                     persona_messages = messages.get(current_persona, [])
-                    
+
                     for msg in persona_messages:
                         if isinstance(msg, AIMessage) and msg.content.strip():
                             new_messages.append(msg.content)
-            
+
             # Combine all new messages into a single response
             if new_messages:
                 combined_response = " ".join(new_messages)
                 st.session_state.messages.append(ChatMessage(role="assistant", content=combined_response))
                 st.chat_message("assistant").write(combined_response)
-            
+
             # Reset interrupt flags
             st.session_state["waiting_for_approval"] = False
             st.session_state["interrupt_processed"] = False
@@ -177,14 +196,6 @@ if prompt := st.chat_input():
             # This should trigger the graph to handle the denial internally
             result = graph.invoke(None, config)
 
-            # # Process the result and continue the conversation
-            # conversation_history = get_conversation_history()
-            # response = graph.stream(
-            #     {"messages": {"General Agent": ("user", conversation_history)}, "current_persona": "General Agent"},
-            #     config,
-            #     stream_mode="values",
-            # )
-
             new_messages = []
             for event in response:
                 _print_event(event, _printed)
@@ -200,7 +211,7 @@ if prompt := st.chat_input():
             # Combine all new messages into a single response
             if new_messages:
                 combined_response = " ".join(new_messages)
-                
+
                 # Check if the new message is a duplicate of the last assistant message
                 if not (st.session_state.messages and 
                         st.session_state.messages[-1].role == "assistant" and 
