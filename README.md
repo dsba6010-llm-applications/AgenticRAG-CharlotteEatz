@@ -60,7 +60,7 @@ You are now able to run our app locally using `streamlit run dinebot_app.py`!
 - **Core Architecture**: Powered by an **agentic RAG** (Retrieval-Augmented Generation) system made by and for Charlotte foodies.
   - Built using **FAISS** for fast and efficient information retrieval.
   - Developed with **LangChain** for agents, tools, and overall advanced conversational flows.
-  - Leveraging OpenAI's **GPT-4o** model for easy integration and support.
+  - Leveraging OpenAI's **GPT** model for easy integration and support.
   - Using **Streamlit** for a simple and accesible user experience.
     
 For more details (or if you are just curious), please take a look at our [Final Report!](https://github.com/dsba6010-llm-applications/AgenticRAG-CharlotteEatz/blob/main/docs/Final%20Project%20Report.pdf)
